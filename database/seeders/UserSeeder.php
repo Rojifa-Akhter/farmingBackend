@@ -35,7 +35,15 @@ class UserSeeder extends Seeder
             'status' => 'active',
             'email_verified_at' => now(),
         ]);
-
+        User::create([
+            'name' => 'farmer',
+            'email' => 'farmer@gmail.com',
+            'role' => 'farmer',
+            'address' => 'Dhaka, Bangladesh',
+            'password' => Hash::make('123456'),
+            'status' => 'active',
+            'email_verified_at' => now(),
+        ]);
         User::create([
             'name' => 'user',
             'email' => 'user@gmail.com',

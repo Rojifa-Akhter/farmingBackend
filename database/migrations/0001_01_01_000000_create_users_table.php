@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->enum('role',['super_admin','investor','user'])->default('user');
+            $table->enum('role',['super_admin','investor','farmer','user'])->default('user');
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
             $table->string('image')->nullable();
@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('otp')->nullable();
             $table->timestamp('otp_expire_at')->nullable();
             $table->string('google_id')->nullable();
+            $table->string('stripe_connect_id')->nullable();
+            $table->boolean('completed_stripe_onboarding')->default(false);
             $table->enum('status',['active','inactive'])->default('inactive');
             $table->rememberToken();
             $table->timestamps();
