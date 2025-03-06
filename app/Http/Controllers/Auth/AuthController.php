@@ -80,9 +80,12 @@ class AuthController extends Controller
         }
 
         $message = match ($user->role) {
-            'Super Admin' => 'Welcome Super Admin! Please verify your email.',
+            'super_admin' => 'Welcome Super Admin! Please verify your email.',
             'investor' => 'Welcome Investor! Please verify your email.',
+            'user' => 'Welcome User! Please verify your email.',
+            default => 'Welcome! Please verify your email.',
         };
+
 
         return response()->json([
             'status'  => true,
@@ -119,6 +122,10 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'error',
             'error'  => 'Invalid OTP.'], 400);
+    }
+    public function guard()
+    {
+        return Auth::guard('api');
     }
     //login
     public function login(Request $request)
@@ -209,10 +216,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function guard()
-    {
-        return Auth::guard('api');
-    }
+
     // update profile
     public function updateProfile(Request $request)
     {
