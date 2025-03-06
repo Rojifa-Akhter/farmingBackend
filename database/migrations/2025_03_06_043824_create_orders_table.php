@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('transaction_id')->nullable();
             $table->string('quantity')->nullable();
             $table->decimal('total_price',8,2)->nullable();
-            $table->enum('status',['pending', 'shipped', 'delivered', 'cancelled'])->default('pending');
+            $table->enum('order_status',['pending', 'shipped', 'delivered', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

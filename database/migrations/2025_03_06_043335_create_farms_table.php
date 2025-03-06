@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->decimal('size',8,2)->nullable();
             $table->string('crop_type')->nullable();
-            $table->enum('status',['available', 'invested', 'harvested'])->default('available');
+            $table->enum('crop_status',['available', 'invested', 'harvested'])->default('available');
             $table->timestamps();
         });
     }

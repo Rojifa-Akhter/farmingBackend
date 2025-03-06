@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('vehicle_number')->nullable();
             $table->string('driver_name')->nullable();
             $table->date('estimated_delivery')->nullable();
-            $table->enum('status',['in-transit', 'delivered', 'failed'])->default('in-transit');
+            $table->enum('logistics_status',['in-transit', 'delivered', 'failed'])->default('in-transit');
             $table->timestamps();
         });
     }

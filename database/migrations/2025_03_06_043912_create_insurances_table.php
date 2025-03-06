@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('policy_number')->nullable();
             $table->longText('coverage_details')->nullable();
             $table->string('premium')->nullable();
-            $table->enum('status',['active', 'expired', 'claimed'])->default('active');
+            $table->enum('insurance_status',['active', 'expired', 'claimed'])->default('active');
             $table->enum('claim_status',['none', 'pending', 'approved', 'rejected'])->default('none');
             $table->timestamps();
         });

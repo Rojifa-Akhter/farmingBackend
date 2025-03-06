@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('investor_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignId('farm_id')->nullable()->constrained('farms')->cascadeOnDelete();
             $table->decimal('amount',8,2)->nullable();
-            $table->enum('status',['pending', 'approved', 'rejected', 'completed'])->default('pending');
+            $table->enum('invest_status',['pending', 'approved', 'rejected', 'completed'])->default('pending');
             $table->timestamps();
         });
     }
