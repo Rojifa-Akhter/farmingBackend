@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
+use App\Http\Controllers\Farmer\FarmMonitorController;
 use App\Http\Controllers\Investor\InvestmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,13 @@ Route::middleware('auth:api','farmer')->group(function () {
     Route::get('investment-get', [InvestmentController::class, 'getInvestment']);
     Route::get('investment-details/{id}', [InvestmentController::class, 'detailsInvestment']);
     Route::delete('investment-delete/{id}', [InvestmentController::class, 'deleteInvestment']);
+
+    //
+    Route::post('farm-monitorings', [FarmMonitorController::class, 'addMonitorData']);
+    Route::get('farm-monitorings/{farm_id}', [FarmMonitorController::class, 'getMonitoring']);
+    Route::get('farm-monitoring/{id}', [FarmMonitorController::class, 'getMonitoringDetails']);
+    Route::put('farm-monitoring/{id}', [FarmMonitorController::class, 'updateMonitorData']);
+    Route::delete('farm-monitoring/{id}', [FarmMonitorController::class, 'deleteMonitorData']);
 
 });
 //investor
