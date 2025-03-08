@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
+use App\Http\Controllers\Investor\InvestmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,10 @@ Route::group(['prefix'=>'auth'],function($router)
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });
+//admin
+Route::middleware('auth:api','super_admin')->group(function () {
+    // Route::post('add-investment', [InvestmentController::class, 'addInvest']);
+});
 //farmer
 Route::middleware('auth:api','farmer')->group(function () {
     Route::get('farms', [FarmController::class, 'farmList']);
@@ -33,4 +38,18 @@ Route::middleware('auth:api','farmer')->group(function () {
     Route::post('add-farm', [FarmController::class, 'addFarm']);
     Route::post('update-farm/{id}', [FarmController::class, 'updateFarm']);
     Route::delete('delete-farm/{id}', [FarmController::class, 'deleteFarm']);
+
+    //invest related roure
+    Route::post('investment-status/{id}', [InvestmentController::class, 'updateStatus']);
+    Route::get('investment-get', [InvestmentController::class, 'getInvestment']);
+    Route::get('investment-details/{id}', [InvestmentController::class, 'detailsInvestment']);
+    Route::delete('investment-delete/{id}', [InvestmentController::class, 'deleteInvestment']);
+
 });
+//investor
+Route::middleware('auth:api','investor')->group(function () {
+    Route::post('add-investment', [InvestmentController::class, 'addInvest']);
+});
+
+
+

@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'investor' => InvestorMiddleware::class,
             'farmer' => FarmerMiddleware::class,
             'user' => UserMiddleware::class,
+            // 'user' => UserMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
