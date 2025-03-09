@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
 use App\Http\Controllers\Farmer\FarmMonitorController;
 use App\Http\Controllers\Farmer\ProductCategoryController;
+use App\Http\Controllers\Farmer\ProductController;
 use App\Http\Controllers\Investor\InvestmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,10 @@ Route::middleware('auth:api','farmer')->group(function () {
     Route::post('add-categories', [ProductCategoryController::class, 'addCategory']);
     Route::put('update-categorie/{id}', [ProductCategoryController::class, 'updateCategory']);
     Route::delete('delete-categories/{id}', [ProductCategoryController::class, 'deleteCategory']);
+    //product route
+    Route::post('add-product', [ProductController::class, 'addProduct']);
+    Route::put('update-product/{id}', [ProductController::class, 'updateProduct']);
+    Route::delete('delete-product/{id}', [ProductController::class, 'deleteProduct']);
 
 
 });
@@ -71,6 +76,9 @@ Route::middleware('auth:api','common')->group(function () {
     //product category
     Route::get('all-categories', [ProductCategoryController::class, 'getCategories']);
     Route::get('details-categories/{id}', [ProductCategoryController::class, 'detailsCategory']);
+    //product
+    Route::get('all-products', [ProductController::class, 'getProduct']);
+    Route::get('details-product/{id}', [ProductController::class, 'detailsProduct']);
 });
 
 

@@ -1,10 +1,8 @@
 <?php
-
 namespace App\Http\Controllers\Farmer;
 
 use App\Http\Controllers\Controller;
 use App\Models\FarmMonitoring;
-use App\Models\Farm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -43,8 +41,12 @@ class FarmMonitorController extends Controller
     // Get All Monitoring Data for a Farm
     public function getMonitoring($farm_id)
     {
-        $monitorings = FarmMonitoring::with('farm','farm.farmer:id,name')->where('farm_id', $farm_id)->get();
-        return response()->json(['status' => true, 'data' => $monitorings]);
+        $monitorings = FarmMonitoring::with('farm', 'farm.farmer:id,name')->where('farm_id', $farm_id)->paginate(10);
+        return response()->json([
+            'status'  => $monitorings->isNotEmpty(),
+            'message' => $monitorings->isNotEmpty() ? 'Monitoring data list fetched successfully!' : 'No data found',
+            'data'    => $monitorings,
+        ], 200);
     }
 
     // Get Single Monitoring Record (With Related Farm)
@@ -52,7 +54,7 @@ class FarmMonitorController extends Controller
     {
         $monitoring = FarmMonitoring::with('farm')->find($id);
 
-        if (!$monitoring) {
+        if (! $monitoring) {
             return response()->json(['status' => false, 'message' => 'Monitoring data not found'], 404);
         }
 
@@ -64,7 +66,7 @@ class FarmMonitorController extends Controller
     {
         $monitoring = FarmMonitoring::find($id);
 
-        if (!$monitoring) {
+        if (! $monitoring) {
             return response()->json(['status' => false, 'message' => 'Monitoring data not found'], 404);
         }
 
@@ -97,7 +99,7 @@ class FarmMonitorController extends Controller
     {
         $monitoring = FarmMonitoring::find($id);
 
-        if (!$monitoring) {
+        if (! $monitoring) {
             return response()->json(['status' => false, 'message' => 'Monitoring data not found'], 404);
         }
 

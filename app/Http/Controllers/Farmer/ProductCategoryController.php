@@ -68,10 +68,11 @@ class ProductCategoryController extends Controller
         if ($request->hasFile('icon')) {
             $existingIcon = $category->icon;
 
-            if (! empty($existingIcon)) {
-                $oldIconPath = public_path('uploads/product_icons/' . $existingIcon);
-                if (file_exists($oldIconPath) && is_file($oldIconPath)) {
-                    unlink($oldIconPath);
+            if ($existingIcon) {
+                $oldImage = parse_url($existingIcon);
+                $filePath = ltrim($oldImage['path'], '/');
+                if (file_exists($filePath)) {
+                    unlink($filePath); // Delete the existing image
                 }
             }
 
@@ -107,14 +108,19 @@ class ProductCategoryController extends Controller
     // Get All Categories
     public function getCategories()
     {
-        $categories = ProductCategory::with('farmer:id,name')->get();
-        return response()->json(['status' => true, 'data' => $categories]);
+        $categories = ProductCategory::with('farmer:id,name')->paginate(10);
+        return response()->json([
+            'status'  => $categories->isNotEmpty(),
+            'message' => $categories->isNotEmpty() ? 'Product Category list fetched successfully!' : 'No data found',
+            'data'    => $categories,
+        ], 200);
+
     }
 
     // Get Single Category
     public function detailsCategory($id)
     {
-        $category = ProductCategory::with('farmer:id,name')->find($id);
+        $category = ProductCategory::with('farmer:id,name,image')->find($id);
 
         if (! $category) {
             return response()->json(['status' => false, 'message' => 'Category not found'], 404);
