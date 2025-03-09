@@ -83,7 +83,7 @@ class ProductController extends Controller
                 $oldImage = parse_url($existingImage);
                 $filePath = ltrim($oldImage['path'], '/');
                 if (file_exists($filePath)) {
-                    unlink($filePath); // Delete the existing image
+                    unlink($filePath); 
                 }
             }
 
@@ -148,7 +148,7 @@ class ProductController extends Controller
                 'status'  => false,
                 'message' => 'No data found',
                 'data'    => null,
-            ], 200); 
+            ], 200);
         }
     }
 

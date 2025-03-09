@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
 use App\Http\Controllers\Farmer\FarmMonitorController;
+use App\Http\Controllers\Farmer\MarketController;
 use App\Http\Controllers\Farmer\ProductCategoryController;
 use App\Http\Controllers\Farmer\ProductController;
 use App\Http\Controllers\Investor\InvestmentController;
@@ -60,6 +61,11 @@ Route::middleware('auth:api','farmer')->group(function () {
     Route::post('add-product', [ProductController::class, 'addProduct']);
     Route::put('update-product/{id}', [ProductController::class, 'updateProduct']);
     Route::delete('delete-product/{id}', [ProductController::class, 'deleteProduct']);
+    //marketplace route
+    Route::post('marketplace-add', [MarketController::class, 'addProductToMarketplace']);
+    Route::put('marketplace-update/{id}', [MarketController::class, 'updateMarketplaceProduct']);
+    Route::delete('marketplace-delete/{id}', [MarketController::class, 'deleteMarketplaceProduct']);
+
 
 
 });
@@ -79,6 +85,10 @@ Route::middleware('auth:api','common')->group(function () {
     //product
     Route::get('all-products', [ProductController::class, 'getProduct']);
     Route::get('details-product/{id}', [ProductController::class, 'detailsProduct']);
+
+    //market place
+    Route::get('get-marketplace-products', [MarketController::class, 'getMarketplaceProducts']);
+
 });
 
 
