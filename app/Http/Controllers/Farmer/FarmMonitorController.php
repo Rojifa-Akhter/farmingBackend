@@ -43,7 +43,7 @@ class FarmMonitorController extends Controller
     // Get All Monitoring Data for a Farm
     public function getMonitoring($farm_id)
     {
-        $monitorings = FarmMonitoring::with('farm')->where('farm_id', $farm_id)->get();
+        $monitorings = FarmMonitoring::with('farm','farm.farmer:id,name')->where('farm_id', $farm_id)->get();
         return response()->json(['status' => true, 'data' => $monitorings]);
     }
 

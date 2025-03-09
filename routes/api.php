@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
 use App\Http\Controllers\Farmer\FarmMonitorController;
+use App\Http\Controllers\Farmer\ProductCategoryController;
 use App\Http\Controllers\Investor\InvestmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,17 +47,30 @@ Route::middleware('auth:api','farmer')->group(function () {
     Route::get('investment-details/{id}', [InvestmentController::class, 'detailsInvestment']);
     Route::delete('investment-delete/{id}', [InvestmentController::class, 'deleteInvestment']);
 
-    //
-    Route::post('farm-monitorings', [FarmMonitorController::class, 'addMonitorData']);
-    Route::get('farm-monitorings/{farm_id}', [FarmMonitorController::class, 'getMonitoring']);
-    Route::get('farm-monitoring/{id}', [FarmMonitorController::class, 'getMonitoringDetails']);
-    Route::put('farm-monitoring/{id}', [FarmMonitorController::class, 'updateMonitorData']);
-    Route::delete('farm-monitoring/{id}', [FarmMonitorController::class, 'deleteMonitorData']);
+    //farm monitor data routing
+    Route::post('add-monitoring', [FarmMonitorController::class, 'addMonitorData']);
+    Route::put('update-monitoring/{id}', [FarmMonitorController::class, 'updateMonitorData']);
+    Route::delete('delete-monitoring/{id}', [FarmMonitorController::class, 'deleteMonitorData']);
+    //product category data routing
+    Route::post('add-categories', [ProductCategoryController::class, 'addCategory']);
+    Route::put('update-categorie/{id}', [ProductCategoryController::class, 'updateCategory']);
+    Route::delete('delete-categories/{id}', [ProductCategoryController::class, 'deleteCategory']);
+
 
 });
 //investor
 Route::middleware('auth:api','investor')->group(function () {
     Route::post('add-investment', [InvestmentController::class, 'addInvest']);
+});
+//investor
+Route::middleware('auth:api','common')->group(function () {
+    //monitor data
+    Route::get('get-monitoring/{farm_id}', [FarmMonitorController::class, 'getMonitoring']);
+    Route::get('details-monitoring/{id}', [FarmMonitorController::class, 'getMonitoringDetails']);
+
+    //product category
+    Route::get('all-categories', [ProductCategoryController::class, 'getCategories']);
+    Route::get('details-categories/{id}', [ProductCategoryController::class, 'detailsCategory']);
 });
 
 
