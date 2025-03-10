@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('profits', function (Blueprint $table) {
+        Schema::create('profit_distributions', function (Blueprint $table) {
             $table->id();
-            $table->string('profit_type')->nullable();  //profit_share,investor_share,farmer_share
+            $table->foreignId('investment_id')->nullable()->constrained('investments')->cascadeOnDelete();
+            $table->foreignId('profit_id')->nullable()->constrained('profits')->cascadeOnDelete();
+            $table->decimal('profit_amount', 8, 2)->nullable();
             $table->timestamps();
         });
+
     }
 
     /**
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profits');
+        Schema::dropIfExists('profit_distributions');
     }
 };
