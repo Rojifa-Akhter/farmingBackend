@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('farm_id')->nullable()->constrained('farms')->cascadeOnDelete();
             $table->decimal('amount',8,2)->nullable();
             $table->enum('invest_status',['pending', 'approved', 'rejected', 'completed'])->default('pending');
+            $table->decimal('profit', 8, 2)->nullable()->comment('Profit share percentage for the investor');
             $table->timestamps();
         });
     }

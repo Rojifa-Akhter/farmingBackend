@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('temperature',8,2)->nullable();
             $table-> decimal('soil_moisture',8,2)->nullable();
             $table-> decimal('rainfall',8,2)->nullable();
+            $table->decimal('yield_prediction', 8, 2)->nullable()->comment('Predicted yield based on monitoring data');
             $table->enum('farm_status',['normal', 'warning', 'critical'])->default('normal');
             $table->timestamps();
         });
