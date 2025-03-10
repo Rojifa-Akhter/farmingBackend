@@ -13,8 +13,9 @@ class ProductCategoryController extends Controller
     public function addCategory(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'icon' => 'required',
+            'name'        => 'required|string|max:255',
+            'icon'        => 'required',
+            'description' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -51,8 +52,9 @@ class ProductCategoryController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'nullable|string|max:255',
-            'icon' => 'nullable',
+            'name'        => 'nullable|string|max:255',
+            'icon'        => 'nullable',
+            'description' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -60,9 +62,10 @@ class ProductCategoryController extends Controller
         }
 
         // Update
-        if ($request->filled('name')) {
-            $category->name = $request->name;
-        }
+        $validatedData = $validator->validated();
+
+        $category->name        = $validatedData['name'] ?? $category->name;
+        $category->description = $validatedData['description'] ?? $category->description;
 
         // Check if a new icon is uploaded
         if ($request->hasFile('icon')) {

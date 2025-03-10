@@ -24,18 +24,53 @@ class FarmMonitorController extends Controller
         }
 
         // Determine farm status based on temperature, soil moisture, and rainfall
-        $farm_status = $this->calculateFarmStatus($request->temperature, $request->soil_moisture);
+        $farm_status = $this->calculateFarmStatus($request->temperature, $request->soil_moisture, $request->rainfall);
 
-        $monitoring = FarmMonitoring::create([
-            'farmer_id'     => Auth::id(),
-            'farm_id'       => $request->farm_id,
-            'temperature'   => $request->temperature,
-            'soil_moisture' => $request->soil_moisture,
-            'rainfall'      => $request->rainfall,
-            'farm_status'   => $farm_status,
-        ]);
+        // Calculate yield prediction based on monitoring data
+        $yield_prediction = $this->calculateYieldPrediction($request->temperature, $request->soil_moisture, $request->rainfall);
 
-        return response()->json(['status' => true, 'message' => 'Farm monitoring data recorded', 'data' => $monitoring]);
+        try {
+            $monitoring = FarmMonitoring::create([
+                'farmer_id'        => Auth::id(),
+                'farm_id'          => $request->farm_id,
+                'temperature'      => $request->temperature,
+                'soil_moisture'    => $request->soil_moisture,
+                'rainfall'         => $request->rainfall,
+                'farm_status'      => $farm_status,
+                'yield_prediction' => $yield_prediction,
+            ]);
+
+            return response()->json(['status' => true, 'message' => 'Farm monitoring data recorded', 'data' => $monitoring]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => 'Failed to record data: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // Calculate Farm Status
+    private function calculateFarmStatus($temperature, $soil_moisture, $rainfall)
+    {
+        if ($temperature > 40 || $soil_moisture < 10 || $rainfall < 5) {
+            return 'critical';
+        } elseif ($temperature > 35 || $soil_moisture < 20 || $rainfall < 10) {
+            return 'warning';
+        }
+        return 'normal';
+    }
+
+    // Calculate Yield Prediction
+    private function calculateYieldPrediction($temperature, $soil_moisture, $rainfall)
+    {
+        // Example formula to calculate yield prediction based on factors (adjust as needed)
+        $temperature_factor = 0.5;
+        $moisture_factor    = 0.3;
+        $rainfall_factor    = 0.2;
+
+        // Yield prediction formula
+        $yield_prediction = ($temperature * $temperature_factor) +
+            ($soil_moisture * $moisture_factor) +
+            ($rainfall * $rainfall_factor);
+
+        return round($yield_prediction, 2); // Round the result to two decimal places
     }
 
     // Get All Monitoring Data for a Farm
@@ -52,7 +87,7 @@ class FarmMonitorController extends Controller
     // Get Single Monitoring Record (With Related Farm)
     public function getMonitoringDetails($id)
     {
-        $monitoring = FarmMonitoring::with('farm')->find($id);
+        $monitoring = FarmMonitoring::with('farm','farm.farmer:id,name')->find($id);
 
         if (! $monitoring) {
             return response()->json(['status' => false, 'message' => 'Monitoring data not found'], 404);
@@ -87,8 +122,10 @@ class FarmMonitorController extends Controller
         // Update monitoring data
         $monitoring->update($request->only(['temperature', 'soil_moisture', 'rainfall']));
 
-        // Recalculate farm status
-        $monitoring->farm_status = $this->calculateFarmStatus($monitoring->temperature, $monitoring->soil_moisture);
+        // Recalculate farm status and yield prediction
+        $monitoring->farm_status      = $this->calculateFarmStatus($request->temperature, $request->soil_moisture, $request->rainfall);
+        $monitoring->yield_prediction = $this->calculateYieldPrediction($request->temperature, $request->soil_moisture, $request->rainfall);
+
         $monitoring->save();
 
         return response()->json(['status' => true, 'message' => 'Monitoring data updated', 'data' => $monitoring]);
@@ -112,14 +149,4 @@ class FarmMonitorController extends Controller
         return response()->json(['status' => true, 'message' => 'Monitoring data deleted']);
     }
 
-    // Calculate Farm Status
-    private function calculateFarmStatus($temperature, $soil_moisture)
-    {
-        if ($temperature > 40 || $soil_moisture < 10) {
-            return 'critical';
-        } elseif ($temperature > 35 || $soil_moisture < 20) {
-            return 'warning';
-        }
-        return 'normal';
-    }
 }

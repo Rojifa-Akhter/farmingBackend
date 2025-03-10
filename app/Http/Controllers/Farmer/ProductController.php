@@ -12,11 +12,12 @@ class ProductController extends Controller
     public function addProduct(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'category_id' => 'required|exists:product_categories,id',
-            'name'        => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price'       => 'required|numeric|min:0',
-            'image'       => 'nullable|image',
+            'category_id'  => 'required|exists:product_categories,id',
+            'name'         => 'required|string|max:255',
+            'description'  => 'nullable|string',
+            'price'        => 'required|numeric|min:0',
+            'harvest_date' => 'required|date',
+            'image'        => 'nullable|image',
         ]);
 
         if ($validator->fails()) {
@@ -31,12 +32,13 @@ class ProductController extends Controller
             $path      = $image->move(public_path('uploads/product_images'), $new_name);
         }
         $product = Product::create([
-            'farmer_id'   => Auth::id(),
-            'category_id' => $request->category_id,
-            'name'        => $request->name,
-            'description' => $request->description,
-            'price'       => $request->price,
-            'image'       => $new_name,
+            'farmer_id'    => Auth::id(),
+            'category_id'  => $request->category_id,
+            'name'         => $request->name,
+            'description'  => $request->description,
+            'price'        => $request->price,
+            'harvest_date' => $request->harvest_date,
+            'image'        => $new_name,
         ]);
         $product->save();
 
@@ -56,11 +58,12 @@ class ProductController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'category_id' => 'nullable|exists:product_categories,id',
-            'name'        => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'price'       => 'nullable|numeric|min:0',
-            'image'       => 'nullable', // Add image validation
+            'category_id'  => 'nullable|exists:product_categories,id',
+            'name'         => 'nullable|string|max:255',
+            'description'  => 'nullable|string',
+            'price'        => 'nullable|numeric|min:0',
+            'harvest_date' => 'nullable',
+            'image'        => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -70,29 +73,30 @@ class ProductController extends Controller
         // Update non-image fields
         $validatedData = $validator->validated();
 
-        $product->category_id = $validatedData['category_id'] ?? $product->category_id;
-        $product->name        = $validatedData['name'] ?? $product->name;
-        $product->description = $validatedData['description'] ?? $product->description;
-        $product->price       = $validatedData['price'] ?? $product->price;
+        $product->category_id  = $validatedData['category_id'] ?? $product->category_id;
+        $product->name         = $validatedData['name'] ?? $product->name;
+        $product->description  = $validatedData['description'] ?? $product->description;
+        $product->price        = $validatedData['price'] ?? $product->price;
+        $product->harvest_date = $validatedData['harvest_date'] ?? $product->harvest_date;
 
         // Handle image upload
         if ($request->hasFile('image')) {
             $existingImage = $product->image;
 
             if ($existingImage) {
-                $oldImage = parse_url($existingImage);
-                $filePath = ltrim($oldImage['path'], '/');
-                if (file_exists($filePath)) {
-                    unlink($filePath); 
+                $oldImagePath = public_path('uploads/product_images/' . $existingImage);
+                if (file_exists($oldImagePath) && is_file($oldImagePath)) {
+                    unlink($oldImagePath); // Delete the existing image
                 }
             }
 
-            $image       = $request->file('image');
-            $newIconName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads/product_images'), $newIconName);
+            $image        = $request->file('image');
+            $newImageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/product_images'), $newImageName);
 
-            $product->image = $newIconName;
+            $product->image = $newImageName;
         }
+
         $product->save();
 
         return response()->json(['status' => true, 'message' => 'Product updated successfully', 'data' => $product]);
