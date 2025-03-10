@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdminInvestorFarmerMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CommonMiddleware;
 use App\Http\Middleware\FarmerMiddleware;

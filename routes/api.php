@@ -37,8 +37,6 @@ Route::middleware('auth:api','super_admin')->group(function () {
 });
 //farmer
 Route::middleware('auth:api','farmer')->group(function () {
-    Route::get('farms', [FarmController::class, 'farmList']);
-    Route::get('farm-details/{id}', [FarmController::class, 'farmDetails']);
     Route::post('add-farm', [FarmController::class, 'addFarm']);
     Route::post('update-farm/{id}', [FarmController::class, 'updateFarm']);
     Route::delete('delete-farm/{id}', [FarmController::class, 'deleteFarm']);
@@ -73,8 +71,11 @@ Route::middleware('auth:api','farmer')->group(function () {
 Route::middleware('auth:api','investor')->group(function () {
     Route::post('add-investment', [InvestmentController::class, 'addInvest']);
 });
-//investor
+//common
 Route::middleware('auth:api','common')->group(function () {
+        //farm data
+        Route::get('farms', [FarmController::class, 'farmList']);
+        Route::get('farm-details/{id}', [FarmController::class, 'farmDetails']);
     //monitor data
     Route::get('get-monitoring/{farm_id}', [FarmMonitorController::class, 'getMonitoring']);
     Route::get('details-monitoring/{id}', [FarmMonitorController::class, 'getMonitoringDetails']);
@@ -90,6 +91,7 @@ Route::middleware('auth:api','common')->group(function () {
     Route::get('get-marketplace-products', [MarketController::class, 'getMarketplaceProducts']);
 
 });
+
 
 
 

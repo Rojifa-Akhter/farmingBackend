@@ -6,29 +6,54 @@ use App\Models\Investment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
 
 class InvestmentController extends Controller
 {
-    //add farm
+    // Add investment with payment via Stripe
     public function addInvest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'farm_id' => 'required|exists:farms,id',
-            'amount'  => 'required|numeric|min:1',
+            'farm_id'        => 'required|exists:farms,id',
+            'amount'         => 'required|numeric|min:1',
+            'payment_method' => 'required|string',
         ]);
+
         if ($validator->fails()) {
             return response()->json(['status' => 'false', 'message' => $validator->errors()], 422);
         }
 
-        $investment = Investment::create([
-            'investor_id' => Auth::id(),
-            'farm_id'     => $request->farm_id,
-            'amount'      => $request->amount,
-            // 'invest_status' => 'pending',
-        ]);
+        // Create a Stripe payment intent for the investment amount
+        Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        return response()->json(['status' => 'true', 'message' => 'Investment request submitted', 'investment' => $investment]);
+        try {
+            // Create a payment intent
+            $paymentIntent = PaymentIntent::create([
+                'amount'              => $request->amount * 100, // Stripe expects amount in cents
+                'currency'            => 'usd',
+                'payment_method'      => $request->payment_method,
+                'confirm'             => false,
+            ]);
+
+            $investment = Investment::create([
+                'investor_id'   => Auth::id(),
+                'farm_id'       => $request->farm_id,
+                'amount'        => $request->amount,
+                'invest_status' => 'pending',
+            ]);
+
+            return response()->json([
+                'status'         => 'true',
+                'message'        => 'Investment request submitted, payment successful',
+                'investment'     => $investment,
+                'payment' => $paymentIntent,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'false', 'message' => 'Payment failed: ' . $e->getMessage()], 500);
+        }
     }
+
     // Farm Owner Approves Investment
     public function updateStatus(Request $request, $id)
     {
@@ -40,14 +65,13 @@ class InvestmentController extends Controller
 
         $status = $request->status;
 
-
-
         // Update the status
         $investment->update(['invest_status' => $status]);
 
         return response()->json(['status' => true, 'message' => "Investment marked as {$status}", 'investment' => $investment]);
     }
-    //get list all investment
+
+    // Get list of all investments
     public function getInvestment()
     {
         $invest_list = Investment::with('investor:id,name', 'farm:id,farm_name,location,farmer_id', 'farm.farmer:id,name')->paginate(10);
@@ -57,8 +81,9 @@ class InvestmentController extends Controller
             'message' => $invest_list->isNotEmpty() ? 'Farm list fetched successfully!' : 'No data found',
             'data'    => $invest_list,
         ], 200);
-
     }
+
+    // Investment details
     public function detailsInvestment($id)
     {
         $invest_details = Investment::with('investor:id,name', 'farm:id,farm_name,location,farmer_id', 'farm.farmer:id,name')->find($id);
@@ -74,6 +99,8 @@ class InvestmentController extends Controller
             'data'    => $invest_details,
         ], 200);
     }
+
+    // Delete Investment
     public function deleteInvestment($id)
     {
         $invest = Investment::find($id);
@@ -88,5 +115,4 @@ class InvestmentController extends Controller
             'message' => 'Investment deleted successfully!',
         ], 200);
     }
-
 }
