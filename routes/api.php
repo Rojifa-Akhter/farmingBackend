@@ -7,6 +7,7 @@ use App\Http\Controllers\Farmer\MarketController;
 use App\Http\Controllers\Farmer\ProductCategoryController;
 use App\Http\Controllers\Farmer\ProductController;
 use App\Http\Controllers\Investor\InvestmentController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -88,5 +89,9 @@ Route::middleware('auth:api', 'common')->group(function () {
 
     //market place
     Route::get('get-marketplace-products', [MarketController::class, 'getMarketplaceProducts']);
+
+    //order
+    Route::post('create-order', [OrderController::class, 'createOrder']);
+    Route::get('orders', [OrderController::class, 'getOrders']);
 
 });
