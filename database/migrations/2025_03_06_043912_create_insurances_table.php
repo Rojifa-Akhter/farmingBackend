@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('insurances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('farm_id')->nullable()->constrained('farms')->cascadeOnDelete();
-            $table->string('provider')->nullable()->comment('Any insurance company name');
+            $table->foreignId('investor_id')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->string('provider')->nullable()->comment('Insurance company name');
             $table->string('policy_number')->nullable();
             $table->longText('coverage_details')->nullable();
-            $table->decimal('coverage_amount', 12, 2)->nullable()->comment('Maximum coverage amount provided by the insurance');
-            $table->string('premium')->nullable();
+            $table->decimal('coverage_amount', 8, 2)->nullable()->comment('Maximum coverage amount');
+            $table->decimal('premium', 8, 2)->nullable()->comment('Insurance premium amount');
             $table->enum('insurance_status', ['active', 'expired', 'claimed'])->default('active');
             $table->enum('claim_status', ['none', 'pending', 'approved', 'rejected'])->default('none');
             $table->timestamps();
