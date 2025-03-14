@@ -3,6 +3,7 @@
 use App\Http\Middleware\AdminInvestorFarmerMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CommonMiddleware;
+use App\Http\Middleware\FarmerInvestorMiddleware;
 use App\Http\Middleware\FarmerMiddleware;
 use App\Http\Middleware\InvestorMiddleware;
 use App\Http\Middleware\UserMiddleware;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'farmer' => FarmerMiddleware::class,
             'user' => UserMiddleware::class,
             'common' => CommonMiddleware::class,
+            'farmer.investor' => FarmerInvestorMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

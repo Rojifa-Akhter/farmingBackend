@@ -6,6 +6,7 @@ use App\Http\Controllers\Farmer\FarmMonitorController;
 use App\Http\Controllers\Farmer\MarketController;
 use App\Http\Controllers\Farmer\ProductCategoryController;
 use App\Http\Controllers\Farmer\ProductController;
+use App\Http\Controllers\Investor\InsuranceController;
 use App\Http\Controllers\Investor\InvestmentController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
@@ -68,6 +69,13 @@ Route::middleware('auth:api', 'investor')->group(function () {
     Route::delete('investment-delete/{id}', [InvestmentController::class, 'deleteInvestment']);
 
 });
+//investor and farmer
+Route::middleware('auth:api', 'farmer.investor')->group(function () {
+    //insurance
+    Route::post('add-insurance', [InsuranceController::class, 'addInsurance']);
+    Route::put('update-insurance/{id}', [InsuranceController::class, 'updateInsurance']);
+    Route::delete('delete-insurance/{id}', [InsuranceController::class, 'deleteInsurance']);
+});
 //common
 Route::middleware('auth:api', 'common')->group(function () {
     //farm data
@@ -93,5 +101,9 @@ Route::middleware('auth:api', 'common')->group(function () {
     //order
     Route::post('create-order', [OrderController::class, 'createOrder']);
     Route::get('orders', [OrderController::class, 'getOrders']);
+
+    //insurance
+    Route::get('insurance-list', [InsuranceController::class, 'insuranceList']);
+    Route::get('insurance-details/{id}', [InsuranceController::class, 'insuranceDetails']);
 
 });

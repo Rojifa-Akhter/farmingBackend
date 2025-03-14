@@ -83,7 +83,7 @@ class MarketController extends Controller
         $marketplace = Marketplace::find($id);
 
         if (! $marketplace) {
-            return response()->json(['status' => false, 'message' => 'Marketplace product not found'], 404);
+            return response()->json(['status' => false, 'message' => 'Marketplace product not found'], 200);
         }
 
         if ($marketplace->farmer_id !== Auth::id()) {
