@@ -9,6 +9,8 @@ use App\Http\Controllers\Farmer\ProductController;
 use App\Http\Controllers\Investor\InsuranceController;
 use App\Http\Controllers\Investor\InvestmentController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProfitController;
+use App\Models\Profit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +36,7 @@ Route::group(['prefix' => 'auth'], function ($router) {
 });
 //admin
 Route::middleware('auth:api', 'super_admin')->group(function () {
-    // Route::post('add-investment', [InvestmentController::class, 'addInvest']);
+    
 });
 //farmer
 Route::middleware('auth:api', 'farmer')->group(function () {
@@ -105,5 +107,7 @@ Route::middleware('auth:api', 'common')->group(function () {
     //insurance
     Route::get('insurance-list', [InsuranceController::class, 'insuranceList']);
     Route::get('insurance-details/{id}', [InsuranceController::class, 'insuranceDetails']);
+    //profit list
+
 
 });

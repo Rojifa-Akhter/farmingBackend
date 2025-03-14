@@ -21,8 +21,7 @@ return new class extends Migration
             $table->json('image')->nullable();
             $table->json('video')->nullable();
             $table->enum('crop_status', ['available', 'invested', 'harvested'])->default('available');
-            $table->decimal('target_investment', 8, 2)->nullable()->comment('Total investment required for the farm');
-            $table->decimal('current_investment', 8, 2)->default(0)->comment('Current investment received');
+            $table->decimal('operational_costs', 8, 2)->nullable()->comment('Operational costs for the farm');
             $table->timestamps();
         });
     }

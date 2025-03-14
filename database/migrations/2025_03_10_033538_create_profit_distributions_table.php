@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('profit_distributions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('investment_id')->nullable()->constrained('investments')->cascadeOnDelete();
-            $table->foreignId('profit_id')->nullable()->constrained('profits')->cascadeOnDelete();
-            $table->decimal('profit_amount', 8, 2)->nullable();
+            $table->decimal('total_profit', 8, 2)->nullable();
+            $table->decimal('investor_share', 8, 2)->nullable()->comment('Investor’s share of the profit');
+            $table->decimal('farmer_share', 8, 2)->nullable()->comment('Farmer’s share of the profit');
             $table->timestamps();
         });
 
