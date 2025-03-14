@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('product_id')->nullable()->constrained('products')->cascadeOnDelete();
             $table->string('quantity')->nullable();
             $table->enum('unit',['kg', 'ton', 'liters', 'pieces'])->nullable();
+            $table->decimal('revenue', 8, 2)->nullable()->comment('Revenue from product sale');
             $table->enum('product_status',['available', 'sold', 'pending'])->default('pending');
             $table->timestamps();
         });

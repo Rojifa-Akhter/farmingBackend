@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('stripe_connect_id')->nullable();
             $table->boolean('completed_stripe_onboarding')->default(false);
             $table->enum('status',['active','inactive'])->default('inactive');
+            $table->decimal('balance', 8, 2)->default(0)->comment('User wallet balance');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('quantity')->nullable();
             $table->decimal('total_price',8,2)->nullable();
             $table->enum('order_status',['pending', 'shipped', 'delivered', 'cancelled'])->default('pending');
+            $table->string('payment_method')->nullable()->comment('Payment method used for the order');
             $table->timestamps();
         });
     }

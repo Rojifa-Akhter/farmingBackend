@@ -3,9 +3,14 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
 use App\Http\Controllers\Farmer\FarmMonitorController;
+use App\Http\Controllers\Farmer\MarketController;
 use App\Http\Controllers\Farmer\ProductCategoryController;
 use App\Http\Controllers\Farmer\ProductController;
+use App\Http\Controllers\Investor\InsuranceController;
 use App\Http\Controllers\Investor\InvestmentController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProfitController;
+use App\Models\Profit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +19,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 //authentication
-Route::group(['prefix'=>'auth'],function($router)
-{
+Route::group(['prefix' => 'auth'], function ($router) {
     Route::post('signup', [AuthController::class, 'signup']);
     Route::post('verify', [AuthController::class, 'verify']);
     Route::post('login', [AuthController::class, 'login']);
@@ -31,22 +35,17 @@ Route::group(['prefix'=>'auth'],function($router)
     });
 });
 //admin
-Route::middleware('auth:api','super_admin')->group(function () {
-    // Route::post('add-investment', [InvestmentController::class, 'addInvest']);
+Route::middleware('auth:api', 'super_admin')->group(function () {
+
 });
 //farmer
-Route::middleware('auth:api','farmer')->group(function () {
-    Route::get('farms', [FarmController::class, 'farmList']);
-    Route::get('farm-details/{id}', [FarmController::class, 'farmDetails']);
+Route::middleware('auth:api', 'farmer')->group(function () {
     Route::post('add-farm', [FarmController::class, 'addFarm']);
     Route::post('update-farm/{id}', [FarmController::class, 'updateFarm']);
     Route::delete('delete-farm/{id}', [FarmController::class, 'deleteFarm']);
 
     //invest related roure
-    Route::post('investment-status/{id}', [InvestmentController::class, 'updateStatus']);
-    Route::get('investment-get', [InvestmentController::class, 'getInvestment']);
-    Route::get('investment-details/{id}', [InvestmentController::class, 'detailsInvestment']);
-    Route::delete('investment-delete/{id}', [InvestmentController::class, 'deleteInvestment']);
+    Route::put('investment-status/{id}', [InvestmentController::class, 'updateStatus']);
 
     //farm monitor data routing
     Route::post('add-monitoring', [FarmMonitorController::class, 'addMonitorData']);
@@ -60,18 +59,38 @@ Route::middleware('auth:api','farmer')->group(function () {
     Route::post('add-product', [ProductController::class, 'addProduct']);
     Route::put('update-product/{id}', [ProductController::class, 'updateProduct']);
     Route::delete('delete-product/{id}', [ProductController::class, 'deleteProduct']);
-
+    //marketplace route
+    Route::post('marketplace-add', [MarketController::class, 'addProductToMarketplace']);
+    Route::put('marketplace-update/{id}', [MarketController::class, 'updateMarketplaceProduct']);
+    Route::delete('marketplace-delete/{id}', [MarketController::class, 'deleteMarketplaceProduct']);
 
 });
 //investor
-Route::middleware('auth:api','investor')->group(function () {
+Route::middleware('auth:api', 'investor')->group(function () {
     Route::post('add-investment', [InvestmentController::class, 'addInvest']);
+    Route::delete('investment-delete/{id}', [InvestmentController::class, 'deleteInvestment']);
+
+
+
 });
-//investor
-Route::middleware('auth:api','common')->group(function () {
+//investor and farmer
+Route::middleware('auth:api', 'farmer.investor')->group(function () {
+    //insurance
+    Route::post('add-insurance', [InsuranceController::class, 'addInsurance']);
+    Route::put('update-insurance/{id}', [InsuranceController::class, 'updateInsurance']);
+    Route::delete('delete-insurance/{id}', [InsuranceController::class, 'deleteInsurance']);
+});
+//common
+Route::middleware('auth:api', 'common')->group(function () {
+    //farm data
+    Route::get('farms', [FarmController::class, 'farmList']);
+    Route::get('farm-details/{id}', [FarmController::class, 'farmDetails']);
     //monitor data
     Route::get('get-monitoring/{farm_id}', [FarmMonitorController::class, 'getMonitoring']);
     Route::get('details-monitoring/{id}', [FarmMonitorController::class, 'getMonitoringDetails']);
+    //investment
+    Route::get('investment-get', [InvestmentController::class, 'getInvestment']);
+    Route::get('investment-details/{id}', [InvestmentController::class, 'detailsInvestment']);
 
     //product category
     Route::get('all-categories', [ProductCategoryController::class, 'getCategories']);
@@ -79,7 +98,18 @@ Route::middleware('auth:api','common')->group(function () {
     //product
     Route::get('all-products', [ProductController::class, 'getProduct']);
     Route::get('details-product/{id}', [ProductController::class, 'detailsProduct']);
+
+    //market place
+    Route::get('get-marketplace-products', [MarketController::class, 'getMarketplaceProducts']);
+
+    //order
+    Route::post('create-order', [OrderController::class, 'createOrder']);
+    Route::get('orders', [OrderController::class, 'getOrders']);
+
+    //insurance
+    Route::get('insurance-list', [InsuranceController::class, 'insuranceList']);
+    Route::get('insurance-details/{id}', [InsuranceController::class, 'insuranceDetails']);
+    //profit list
+
+
 });
-
-
-

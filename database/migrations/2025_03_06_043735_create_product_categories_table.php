@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('farmer_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->string('name')->nullable();
             $table->string('icon')->nullable();
+            $table->longText('description')->nullable();
             $table->timestamps();
         });
     }
