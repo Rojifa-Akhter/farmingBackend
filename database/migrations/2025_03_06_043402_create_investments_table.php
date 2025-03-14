@@ -18,7 +18,6 @@ return new class extends Migration
             $table->decimal('amount', 8, 2)->nullable();
             $table->enum('invest_status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->decimal('profit_share', 8, 2)->nullable()->comment('Profit share percentage for the investor');
-            $table->string('payment_intent_id')->nullable();
             $table->timestamps();
         });
     }

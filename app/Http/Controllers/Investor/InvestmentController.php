@@ -3,64 +3,36 @@ namespace App\Http\Controllers\Investor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Investment;
+use App\Models\User;
+use App\Notifications\InvestmentStatusNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Validator;
-use Stripe\PaymentIntent;
-use Stripe\Refund;
-use Stripe\Stripe;
+
 
 class InvestmentController extends Controller
 { //add invest
     public function addInvest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'farm_id'        => 'required|exists:farms,id',
-            'amount'         => 'required|numeric|min:1',
-            'payment_method' => 'required|string',
+            'farm_id'     => 'required|exists:farms,id',
+            'amount'      => 'required|numeric|min:1',
+
         ]);
 
         if ($validator->fails()) {
             return response()->json(['status' => false, 'message' => $validator->errors()], 422);
         }
 
-        try {
-            Stripe::setApiKey(env('STRIPE_SECRET'));
+        $investment = Investment::create([
+            'investor_id'   => $request->user()->id,
+            'farm_id'       => $request->farm_id,
+            'amount'        => $request->amount,
+            'invest_status' => 'pending',
+        ]);
 
-            // Create a Stripe PaymentIntent
-            $paymentIntent = PaymentIntent::create([
-                'amount'                    => $request->amount * 100,
-                'currency'                  => 'usd',
-                'payment_method'            => $request->payment_method,
-                'confirm'                   => true, // Confirm payment immediately
-                'automatic_payment_methods' => [
-                    'enabled' => true,
-                    // 'allow_redirects' => 'never', // Disable redirect-based methods
-                ],
-            ]);
-
-            if ($paymentIntent->status !== 'succeeded') {
-                return response()->json(['status' => false, 'message' => 'Payment failed'], 400);
-            }
-
-            $investment = Investment::create([
-                'investor_id'       => Auth::id(),
-                'farm_id'           => $request->farm_id,
-                'amount'            => $request->amount,
-                'invest_status'     => 'pending', // Initially pending
-                'payment_intent_id' => $paymentIntent->id,
-                'payment_status'    => $paymentIntent->status,
-            ]);
-
-            return response()->json([
-                'status'     => true,
-                'message'    => 'Investment request submitted, payment successful',
-                'investment' => $investment,
-                'payment'    => $paymentIntent,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => 'Payment failed: ' . $e->getMessage()], 500);
-        }
+        return response()->json([
+            'status' => true, 'message' => 'Investment created successfully', 'investment' => $investment], 201);
     }
 
     /**
@@ -70,44 +42,34 @@ class InvestmentController extends Controller
     {
         $investment = Investment::findOrFail($id);
 
-        $request->validate([
-            'status' => 'required|in:approved,rejected,completed',
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:approved,rejected',
+
         ]);
-
-        // If investment is rejected, issue a refund
-        if ($request->status === 'rejected' && $investment->payment_intent_id) {
-            try {
-                Stripe::setApiKey(env('STRIPE_SECRET'));
-
-                // Issue a refund
-                Refund::create([
-                    'payment_intent' => $investment->payment_intent_id,
-                ]);
-
-                // Update the investment status to rejected
-                $investment->update(['invest_status' => 'rejected']);
-
-                return response()->json([
-                    'status'     => true,
-                    'message'    => "Investment rejected and refund issued successfully.",
-                    'investment' => $investment,
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => "Failed to issue refund: " . $e->getMessage(),
-                ], 500);
-            }
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => $validator->errors()], 422);
         }
 
-        // Approve or Complete investment
-        $investment->update(['invest_status' => $request->status]);
+        $investment                = Investment::findOrFail($id);
+        $investment->invest_status = $request->status;
+
+        if ($request->status == 'approved') {
+            $investment->profit_share = 10; // 10% profit share
+        } else {
+            $investment->profit_share = null; // No profit share if rejected
+        }
+
+        $investment->save();
+
+        // Notify the investor
+        $investor = User::findOrFail($investment->investor_id);
+        $investor->notify(new InvestmentStatusNotification($investment));
 
         return response()->json([
-            'status'     => true,
-            'message'    => "Investment marked as {$request->status}",
+            'message'    => 'Investment status updated successfully!',
             'investment' => $investment,
-        ]);
+        ], 200);
+
     }
 
     /**
@@ -162,7 +124,7 @@ class InvestmentController extends Controller
         $invest = Investment::find($id);
 
         if (! $invest) {
-            return response()->json(['message' => 'Investment not found!'], 400);
+            return response()->json(['message' => 'Investment not found!'], 200);
         }
 
         $invest->delete();

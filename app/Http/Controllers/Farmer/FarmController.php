@@ -18,8 +18,7 @@ class FarmController extends Controller
             'crop_type'          => 'required|string|max:255',
             'image'              => 'nullable|max:5',
             'video'              => 'nullable|max:5',
-            'target_investment'  => 'nullable|numeric',
-            'current_investment' => 'nullable|numeric',
+            'operational_costs'  => 'nullable|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -54,8 +53,7 @@ class FarmController extends Controller
             'image'              => json_encode($newImages),
             'video'              => json_encode($newVideos),
             'crop_status'        => $request->crop_status ?? 'available',
-            'target_investment'  => $request->target_investment,
-            'current_investment' => $request->current_investment ?? 0,
+            'operational_costs'  => $request->operational_costs,
         ]);
 
         return response()->json([
@@ -73,8 +71,7 @@ class FarmController extends Controller
             'crop_type'          => 'nullable|string|max:255',
             'image'              => 'nullable|max:5',
             'video'              => 'nullable|max:5',
-            'target_investment'  => 'nullable|numeric',
-            'current_investment' => 'nullable|numeric',
+            'operational_costs'  => 'nullable|numeric',
             'crop_status'        => 'nullable|in:available,invested,harvested',
         ]);
 

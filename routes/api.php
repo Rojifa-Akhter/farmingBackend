@@ -36,7 +36,7 @@ Route::group(['prefix' => 'auth'], function ($router) {
 });
 //admin
 Route::middleware('auth:api', 'super_admin')->group(function () {
-    
+
 });
 //farmer
 Route::middleware('auth:api', 'farmer')->group(function () {
@@ -45,7 +45,7 @@ Route::middleware('auth:api', 'farmer')->group(function () {
     Route::delete('delete-farm/{id}', [FarmController::class, 'deleteFarm']);
 
     //invest related roure
-    Route::post('investment-status/{id}', [InvestmentController::class, 'updateStatus']);
+    Route::put('investment-status/{id}', [InvestmentController::class, 'updateStatus']);
 
     //farm monitor data routing
     Route::post('add-monitoring', [FarmMonitorController::class, 'addMonitorData']);
@@ -69,6 +69,8 @@ Route::middleware('auth:api', 'farmer')->group(function () {
 Route::middleware('auth:api', 'investor')->group(function () {
     Route::post('add-investment', [InvestmentController::class, 'addInvest']);
     Route::delete('investment-delete/{id}', [InvestmentController::class, 'deleteInvestment']);
+
+
 
 });
 //investor and farmer
