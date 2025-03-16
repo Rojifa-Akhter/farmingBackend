@@ -18,7 +18,7 @@ class Marketplace extends Model
     }
     public function farm()
     {
-        return $this->belongsTo(Farm::class, 'farm_id');
+        return $this->belongsTo(Farm::class);
     }
 
 }

@@ -19,13 +19,11 @@ class ProfitDistributionController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Farm not found',
-            ], 404);
+            ], 200);
         }
 
-        // Step 1: Get total revenue from products sold in the marketplace
         $totalRevenue = $farm->marketplaces->sum('revenue');
 
-        // Step 2: Subtract operational costs to get the actual profit
         $totalProfit = $totalRevenue - $farm->operational_costs;
 
         if ($totalProfit <= 0) {
@@ -35,15 +33,15 @@ class ProfitDistributionController extends Controller
             ], 200);
         }
 
-        // Step 3: Calculate profit shares (30% Investor, 70% Farmer)
+        //Calculate profit shares (30% Investor, 70% Farmer)
         $investorShare = $totalProfit * 0.30;
         $farmerShare = $totalProfit * 0.70;
 
-        // Step 4: Distribute profit among investors
+        // Distribute profit among investors
         foreach ($farm->investments as $investment) {
             ProfitDistribution::create([
                 'investment_id' => $investment->id,
-                'product_id' => null, // Optional: If tracking product-based profits
+                'product_id' => null,
                 'total_profit' => $totalProfit,
                 'investor_share' => $investorShare,
                 'farmer_share' => $farmerShare,

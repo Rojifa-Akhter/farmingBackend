@@ -41,7 +41,7 @@ class ProductSeeder extends Seeder
             'category_id' => $category->id,
             'name' => 'Green Lettuce',
             'description' => 'Fresh and crispy green lettuce for your salads.',
-            'price' => 2.50,
+            'price' => 5.50,
             'harvest_date' => now()->subMonths(2),
             'image' => 'product.jpg',
         ]);
@@ -51,7 +51,7 @@ class ProductSeeder extends Seeder
             'category_id' => $category->id,
             'name' => 'Free-range Eggs',
             'description' => 'Fresh eggs from our free-range chickens.',
-            'price' => 3.00,
+            'price' => 10.00,
             'harvest_date' => now()->subWeeks(3),
             'image' => 'product.jpg',
         ]);
