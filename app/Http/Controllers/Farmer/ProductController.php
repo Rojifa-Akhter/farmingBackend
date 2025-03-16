@@ -126,15 +126,24 @@ class ProductController extends Controller
     }
 
     // Get all products
-    public function getProduct()
+    public function getProduct(Request $request)
     {
-        $products = Product::with(['farmer:id,name', 'category:id,name,icon'])->paginate(10);
+        $products = Product::with(['farmer:id,name', 'category:id,name,icon'])
+                            ->when($request->name, function($query, $name) {
+                                return $query->where('name', 'like', '%' . $name . '%');
+                            })
+                            ->when($request->id, function($query, $id) {
+                                return $query->where('id', $id);
+                            })
+                            ->paginate(10);
+
         return response()->json([
             'status'  => $products->isNotEmpty(),
             'message' => $products->isNotEmpty() ? 'Product list fetched successfully!' : 'No data found',
             'data'    => $products,
         ], 200);
     }
+
 
     //Get a single product
     public function detailsProduct($id)

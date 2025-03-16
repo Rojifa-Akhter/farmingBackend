@@ -11,56 +11,51 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfitDistributionController extends Controller
 {
-    // Fetch the profit distribution for a farm
     public function getProfitDistribution($farmId)
     {
-        $farm = Farm::with('investments', 'marketplace')->find($farmId);
+        $farm = Farm::with('investments', 'marketplaces')->find($farmId);
 
         if (!$farm) {
             return response()->json([
                 'status' => false,
                 'message' => 'Farm not found',
-            ], status: 200);
+            ], 404);
         }
 
-        // Calculate profit distribution logic (example: based on revenue from orders)
-        $totalRevenue = $farm->marketplace->sum('revenue');
+        // Step 1: Get total revenue from products sold in the marketplace
+        $totalRevenue = $farm->marketplaces->sum('revenue');
 
-        // Get investments for the farm
-        $investments = $farm->investments;
+        // Step 2: Subtract operational costs to get the actual profit
+        $totalProfit = $totalRevenue - $farm->operational_costs;
 
-        foreach ($investments as $investment) {
-            $profitShare = ($investment->amount / $farm->operational_costs) * $totalRevenue; // Simplified calculation
+        if ($totalProfit <= 0) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No profit available after costs.',
+            ], 200);
+        }
+
+        // Step 3: Calculate profit shares (30% Investor, 70% Farmer)
+        $investorShare = $totalProfit * 0.30;
+        $farmerShare = $totalProfit * 0.70;
+
+        // Step 4: Distribute profit among investors
+        foreach ($farm->investments as $investment) {
             ProfitDistribution::create([
                 'investment_id' => $investment->id,
-                'total_profit' => $totalRevenue,
-                'investor_share' => $profitShare,
-                'farmer_share' => $totalRevenue - $profitShare,
+                'product_id' => null, // Optional: If tracking product-based profits
+                'total_profit' => $totalProfit,
+                'investor_share' => $investorShare,
+                'farmer_share' => $farmerShare,
             ]);
         }
 
         return response()->json([
             'status' => true,
-            'message' => 'Profit distribution calculated successfully',
+            'message' => 'Profit distribution completed successfully.',
+            'total_profit' => $totalProfit,
+            'investor_share' => $investorShare,
+            'farmer_share' => $farmerShare,
         ], 200);
-    }
-
-    // Create a new profit distribution record (for testing)
-    public function createProfitDistribution(Request $request)
-    {
-        $request->validate([
-            'investment_id' => 'required|exists:investments,id',
-            'total_profit' => 'required|numeric',
-            'investor_share' => 'required|numeric',
-            'farmer_share' => 'required|numeric',
-        ]);
-
-        $profitDistribution = ProfitDistribution::create($request->all());
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Profit distribution created successfully',
-            'data' => $profitDistribution,
-        ], 201);
     }
 }
