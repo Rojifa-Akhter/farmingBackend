@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LogisticController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
 use App\Http\Controllers\Farmer\FarmMonitorController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Investor\InsuranceController;
 use App\Http\Controllers\Investor\InvestmentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfitController;
+use App\Http\Controllers\ProfitDistributionController;
 use App\Models\Profit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +38,7 @@ Route::group(['prefix' => 'auth'], function ($router) {
 });
 //admin
 Route::middleware('auth:api', 'super_admin')->group(function () {
+    Route::delete('delete-logistic/{id}', [LogisticController::class, 'deleteLogistics']);
 
 });
 //farmer
@@ -79,6 +82,15 @@ Route::middleware('auth:api', 'farmer.investor')->group(function () {
     Route::post('add-insurance', [InsuranceController::class, 'addInsurance']);
     Route::put('update-insurance/{id}', [InsuranceController::class, 'updateInsurance']);
     Route::delete('delete-insurance/{id}', [InsuranceController::class, 'deleteInsurance']);
+
+    Route::get('profit-distribution/{farmId}', [ProfitDistributionController::class, 'getProfitDistribution']);
+    Route::post('profit-distribution', [ProfitDistributionController::class, 'createProfitDistribution']);
+});
+//admin and farmer
+Route::middleware('auth:api', 'farmer.admin')->group(function () {
+        //logistic
+        Route::post('create-logistics', [LogisticController::class, 'createLogistics']);
+        Route::put('update-logistic/{id}', [LogisticController::class, 'updateLogisticsStatus']);
 });
 //common
 Route::middleware('auth:api', 'common')->group(function () {
@@ -103,13 +115,20 @@ Route::middleware('auth:api', 'common')->group(function () {
     Route::get('get-marketplace-products', [MarketController::class, 'getMarketplaceProducts']);
 
     //order
+    Route::post('payment-intent', [OrderController::class, 'createPaymentIntent']);
     Route::post('create-order', [OrderController::class, 'createOrder']);
-    Route::get('orders', [OrderController::class, 'getOrders']);
+    Route::get('order-list', [OrderController::class, 'orderList']);
+    Route::get('order-details/{id}', [OrderController::class, 'orderDetails']);
+    Route::delete('delete-order/{id}', [OrderController::class, 'deleteOrder']);
 
     //insurance
     Route::get('insurance-list', [InsuranceController::class, 'insuranceList']);
     Route::get('insurance-details/{id}', [InsuranceController::class, 'insuranceDetails']);
-    //profit list
+
+//logistics
+    Route::get('get-logistics', [LogisticController::class, 'getAllLogistics']);
+    Route::get('logistic-details/{id}', [LogisticController::class, 'getLogisticsDetails']);
+
 
 
 });

@@ -43,4 +43,8 @@ class Farm extends Model
         }
         return [];
     }
+    public function marketplaces()
+    {
+        return $this->hasMany(Marketplace::class);
+    }
 }

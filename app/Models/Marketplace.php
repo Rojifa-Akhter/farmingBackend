@@ -16,5 +16,9 @@ class Marketplace extends Model
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+    public function farm()
+    {
+        return $this->belongsTo(Farm::class);
+    }
 
 }
