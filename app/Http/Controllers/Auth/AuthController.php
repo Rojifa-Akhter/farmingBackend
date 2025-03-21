@@ -82,14 +82,16 @@ class AuthController extends Controller
         $message = match ($user->role) {
             'super_admin' => 'Welcome Super Admin! Please verify your email.',
             'investor' => 'Welcome Investor! Please verify your email.',
+            'farmer' => 'Welcome Farmer! Please verify your email.',
             'user' => 'Welcome User! Please verify your email.',
             default => 'Welcome! Please verify your email.',
         };
 
-
+        $token = JWTAuth::fromUser($user);
         return response()->json([
             'status'  => true,
             'message' => $message,
+            'access_token' => $token,
         ], 200);
     }
 
@@ -116,12 +118,13 @@ class AuthController extends Controller
             return response()->json([
                 'status'  => true,
                 'message' => 'OTP verified successfully.',
+                'access_token'     => $token,
             ], 200);
         }
 
         return response()->json([
-            'status' => 'error',
-            'error'  => 'Invalid OTP.'], 400);
+            'status' => false,
+            'error'  => 'Invalid OTP.'], 401);
     }
     public function guard()
     {
@@ -142,24 +145,19 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
         if (! $user) {
-            return response()->json(['status' => false, 'message' => 'Email not found.'], 403);
+            return response()->json(['status' => false, 'message' => 'Email or password is incorrect.'], 403);
         }
 
         if (! $token = Auth::guard('api')->attempt($credentials)) {
-            return response()->json(['status' => false, 'message' => 'Invalid password.'], 401);
+            return response()->json(['status' => false, 'message' => 'Email or password is incorrect.'], 401);
         }
 
         return response()->json([
             'status'           => true,
+            'message'=>'Login Successfully',
             'access_token'     => $token,
             'token_type'       => 'bearer',
-            'user_information' => [
-                'name'              => $user->name,
-                'email'             => $user->email,
-                'role'              => $user->role,
-                'email_verified_at' => $user->email_verified_at,
-                'image'             => $user->image,
-            ],
+            'user_information' => $user
         ], 200);
 
     }
