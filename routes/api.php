@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\LogisticController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
@@ -39,6 +40,7 @@ Route::group(['prefix' => 'auth'], function ($router) {
 //admin
 Route::middleware('auth:api', 'super_admin')->group(function () {
     Route::delete('delete-logistic/{id}', [LogisticController::class, 'deleteLogistics']);
+    Route::get('analytics',[AdminDashboardController::class,'Analytics']);
 
 });
 //farmer
