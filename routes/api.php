@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\LogisticController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Farmer\FarmController;
 use App\Http\Controllers\Farmer\FarmMonitorController;
@@ -134,3 +135,8 @@ Route::middleware('auth:api', 'common')->group(function () {
 
 
 });
+Route::get('insurance-list', [InsuranceController::class, 'insuranceList']);
+Route::get('all-products', [ProductController::class, 'getProduct']);
+Route::get('investment-get', [InvestmentController::class, 'getInvestment']);
+Route::get('farms', [FarmController::class, 'farmList']);
+Route::get('investor-list', [UserController::class, 'investorList']);
