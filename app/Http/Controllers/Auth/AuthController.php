@@ -31,16 +31,16 @@ class AuthController extends Controller
     //signup or registration
     public function signup(Request $request)
     {
-        // return $request;
+        // Validate the request
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|unique:users,email',
-            'address'  => 'required|string|max:255',
-            'phone'    => 'nullable|string|max:15',
-            'password' => 'required|string|min:6',
-            'role'     => 'nullable|string|in:super_admin,investor,user',
-            'image'    => 'nullable|image',
-
+            'name'                 => 'required|string|max:255',
+            'email'                => 'required|string|email|unique:users,email',
+            'address'              => 'required|string|max:255',
+            'phone'                => 'nullable|string|max:15',
+            'password'             => 'required|string|min:6',
+            'role'                 => 'nullable|string|in:super_admin,investor,user',
+            'image'                => 'nullable|image',
+            'is_verified_investor' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -54,23 +54,30 @@ class AuthController extends Controller
             $new_name  = time() . '.' . $extension;
             $path      = $image->move(public_path('uploads/profile_images'), $new_name);
         }
-        // return $new_name;
+
         $otp            = rand(100000, 999999);
         $otp_expires_at = now()->addMinutes(10);
 
-        $role = $request->role ?? 'user';
+                        // Set role based on is_verified_investor
+        $role = 'user'; // Default role is 'user'
+
+        // If investor is verified, set role to 'investor'
+        if ($request->is_verified_investor) {
+            $role = 'investor';
+        }
 
         $user = User::create([
-            'name'           => $request->name,
-            'email'          => $request->email,
-            'address'        => $request->address,
-            'phone'          => $request->phone,
-            'password'       => Hash::make($request->password),
-            'role'           => $role,
-            'image'          => $new_name, // Can now safely be null
-            'otp'            => $otp,
-            'otp_expires_at' => $otp_expires_at,
-            'status'         => 'inactive',
+            'name'                 => $request->name,
+            'email'                => $request->email,
+            'address'              => $request->address,
+            'phone'                => $request->phone,
+            'password'             => Hash::make($request->password),
+            'role'                 => $role,     // Set 'investor' if verified, else 'user'
+            'image'                => $new_name, // Can now safely be null
+            'otp'                  => $otp,
+            'otp_expires_at'       => $otp_expires_at,
+            'status'               => 'inactive',
+            'is_verified_investor' => $request->is_verified_investor ?? false,
         ]);
 
         try {
@@ -89,8 +96,8 @@ class AuthController extends Controller
 
         $token = JWTAuth::fromUser($user);
         return response()->json([
-            'status'  => true,
-            'message' => $message,
+            'status'       => true,
+            'message'      => $message,
             'access_token' => $token,
         ], 200);
     }
@@ -116,9 +123,9 @@ class AuthController extends Controller
             $token = JWTAuth::fromUser($user);
 
             return response()->json([
-                'status'  => true,
-                'message' => 'OTP verified successfully.',
-                'access_token'     => $token,
+                'status'       => true,
+                'message'      => 'OTP verified successfully.',
+                'access_token' => $token,
             ], 200);
         }
 
@@ -154,10 +161,10 @@ class AuthController extends Controller
 
         return response()->json([
             'status'           => true,
-            'message'=>'Login Successfully',
+            'message'          => 'Login Successfully',
             'access_token'     => $token,
             'token_type'       => 'bearer',
-            'user_information' => $user
+            'user_information' => $user,
         ], 200);
 
     }
@@ -214,7 +221,6 @@ class AuthController extends Controller
         ]);
     }
 
-
     // update profile
     public function updateProfile(Request $request)
     {
@@ -225,11 +231,11 @@ class AuthController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name'        => 'nullable|string|max:255',
-            'address'     => 'nullable|string|max:255',
-            'phone'       => 'nullable|string|max:16',
-            'password'    => 'nullable|string|min:6|confirmed',
-            'image'       => 'nullable|file',
+            'name'     => 'nullable|string|max:255',
+            'address'  => 'nullable|string|max:255',
+            'phone'    => 'nullable|string|max:16',
+            'password' => 'nullable|string|min:6|confirmed',
+            'image'    => 'nullable|file',
         ]);
 
         if ($validator->fails()) {
@@ -263,9 +269,8 @@ class AuthController extends Controller
             $newName   = time() . '.' . $extension;
             $image->move(public_path('uploads/profile_images'), $newName);
 
-            $user->image = $newName;
+            $user['image'] = $newName;
         }
-
 
         $user->save();
 
@@ -273,13 +278,13 @@ class AuthController extends Controller
             'status'  => true,
             'message' => 'Profile updated successfully.',
             'data'    => [
-                'id'        => $user->id,
-                'name'      => $user->name,
-                'email'     => $user->email,
-                'address'   => $user->address,
-                'contact'   => $user->phone,
-                'image'     => $user->image,
-                'role'      => $user->role,
+                'id'      => $user->id,
+                'name'    => $user->name,
+                'email'   => $user->email,
+                'address' => $user->address,
+                'contact' => $user->phone,
+                'image'   => $user->image,
+                'role'    => $user->role,
             ],
         ], 200);
 
