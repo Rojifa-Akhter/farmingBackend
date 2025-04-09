@@ -76,7 +76,7 @@ Route::middleware('auth:api', 'investor')->group(function () {
     Route::post('add-investment', [InvestmentController::class, 'addInvest']);
     Route::delete('investment-delete/{id}', [InvestmentController::class, 'deleteInvestment']);
 
-     //notification
+     //notification after investment
      Route::get('get-notify', [InvestmentController::class, 'getnotification']);
      Route::get('read-notify/{id}', [InvestmentController::class, 'readNotification']);
      Route::get('read-all-notify', [InvestmentController::class, 'readAllNotification']);
