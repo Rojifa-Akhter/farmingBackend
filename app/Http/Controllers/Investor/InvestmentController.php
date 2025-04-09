@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Investor;
 
 use App\Http\Controllers\Controller;
@@ -6,7 +7,8 @@ use App\Models\Investment;
 use App\Models\User;
 use App\Notifications\InvestmentStatusNotification;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -32,7 +34,10 @@ class InvestmentController extends Controller
         ]);
 
         return response()->json([
-            'status' => true, 'message' => 'Investment created successfully', 'investment' => $investment], 201);
+            'status' => true,
+            'message' => 'Investment created successfully',
+            'investment' => $investment
+        ], 201);
     }
 
     /**
@@ -69,7 +74,6 @@ class InvestmentController extends Controller
             'message'    => 'Investment status updated successfully!',
             'investment' => $investment,
         ], 200);
-
     }
 
     /**
@@ -132,5 +136,52 @@ class InvestmentController extends Controller
         return response()->json([
             'message' => 'Investment deleted successfully!',
         ], 200);
+    }
+
+    //notification after investment
+    public function getnotification(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'investor') {
+            return response()->json(['status' => false, 'message' => 'Access denied. Only investors can view notifications.'], 403);
+        }
+
+        $notifications = $user->unreadNotifications;
+
+        return response()->json([
+            'status'        => true,
+            'notifications' => $notifications,
+        ]);
+    }
+    public function readNotification($id)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'investor') {
+            return response()->json(['status' => false, 'message' => 'Access denied.'], 403);
+        }
+
+        $notification = $user->notifications()->where('id', $id)->first();
+
+        if (!$notification) {
+            return response()->json(['status' => false, 'message' => 'Notification not found.'], 200);
+        }
+
+        $notification->markAsRead();
+
+        return response()->json(['status' => true, 'message' => 'Notification marked as read.']);
+    }
+    public function readAllNotification()
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'investor') {
+            return response()->json(['status' => false, 'message' => 'Access denied.'], 403);
+        }
+
+        $user->unreadNotifications->markAsRead();
+
+        return response()->json(['status' => true, 'message' => 'All notifications marked as read.']);
     }
 }
