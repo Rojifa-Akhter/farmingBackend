@@ -58,7 +58,6 @@ class AuthController extends Controller
         $otp            = rand(100000, 999999);
         $otp_expires_at = now()->addMinutes(10);
 
-                        // Set role based on is_verified_investor
         $role = 'user'; // Default role is 'user'
 
         // If investor is verified, set role to 'investor'

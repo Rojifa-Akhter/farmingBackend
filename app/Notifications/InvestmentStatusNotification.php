@@ -26,7 +26,7 @@ class InvestmentStatusNotification extends Notification
 
     public function toMail($notifiable)
     {
-       
+
     }
 
     public function toArray($notifiable)
@@ -35,6 +35,7 @@ class InvestmentStatusNotification extends Notification
             'investment_id' => $this->investment->id,
             'status' => $this->investment->invest_status,
             'amount' => $this->investment->amount,
+            'message' => 'Your investment status has been updated to ' . ucfirst($this->investment->invest_status) . '.'
         ];
     }
 }
