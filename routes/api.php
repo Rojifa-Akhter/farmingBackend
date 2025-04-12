@@ -136,11 +136,11 @@ Route::middleware('auth:api', 'common')->group(function () {
     Route::get('get-logistics', [LogisticController::class, 'getAllLogistics']);
     Route::get('logistic-details/{id}', [LogisticController::class, 'getLogisticsDetails']);
 
+ Route::get('investor-list', [UserController::class, 'investorList']);
 
 
 });
-Route::get('insurance-list', [InsuranceController::class, 'insuranceList']);
+// Route::get('insurance-list', [InsuranceController::class, 'insuranceList']);
 Route::get('all-products', [ProductController::class, 'getProduct']);
 Route::get('investment-get', [InvestmentController::class, 'getInvestment']);
 Route::get('farms', [FarmController::class, 'farmList']);
-Route::get('investor-list', [UserController::class, 'investorList']);
