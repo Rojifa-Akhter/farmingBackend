@@ -58,7 +58,8 @@ class AuthController extends Controller
         $otp            = rand(100000, 999999);
         $otp_expires_at = now()->addMinutes(10);
 
-        $role = 'user'; // Default role is 'user'
+        // $role = 'user'; // Default role is 'user'
+        $role = 'farmer'; // Default role is 'user'
 
         // If investor is verified, set role to 'investor'
         if ($request->is_verified_investor) {
@@ -89,7 +90,7 @@ class AuthController extends Controller
             'super_admin' => 'Welcome Super Admin! Please verify your email.',
             'investor' => 'Welcome Investor! Please verify your email.',
             'farmer' => 'Welcome Farmer! Please verify your email.',
-            'user' => 'Welcome User! Please verify your email.',
+            // 'user' => 'Welcome User! Please verify your email.',
             default => 'Welcome! Please verify your email.',
         };
 
@@ -202,7 +203,7 @@ class AuthController extends Controller
             'name'         => $request->name,
             'email'        => $request->email,
             'password'     => Hash::make(Str::random(16)),
-            'role'         => 'user',
+            'role'         => 'farmer',
             'google_id'    => $request->google_id ?? null,
             'address'      => $request->address ?? null,
             'verify_email' => true,
