@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'role' => 'super_admin',
             'address' => 'Dhaka, Bangladesh',
-            'password' => Hash::make('123456'),
+            'password' => Hash::make('12345678'),
             'status' => 'active',
             'email_verified_at' => now(),
         ]);
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             'email' => 'investor@gmail.com',
             'role' => 'investor',
             'address' => 'Dhaka, Bangladesh',
-            'password' => Hash::make('123456'),
+            'password' => Hash::make('12345678'),
             'status' => 'active',
             'email_verified_at' => now(),
         ]);
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             'email' => 'farmer@gmail.com',
             'role' => 'farmer',
             'address' => 'Dhaka, Bangladesh',
-            'password' => Hash::make('123456'),
+            'password' => Hash::make('12345678'),
             'status' => 'active',
             'email_verified_at' => now(),
         ]);
