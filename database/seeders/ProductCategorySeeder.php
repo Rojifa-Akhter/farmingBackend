@@ -22,21 +22,21 @@ class ProductCategorySeeder extends Seeder
         ProductCategory::create([
             'user_id' => $user->id,
             'name' => 'Fruits',
-            'icon' => 'user(1).jpg',
+            'icon' => 'farmer(1).jpg',
             'description' => 'Fresh and organic fruits harvested from the farm.',
         ]);
 
         ProductCategory::create([
             'user_id' => $user->id,
             'name' => 'Vegetables',
-            'icon' => 'user(1).jpg',
+            'icon' => 'farmer(1).jpg',
             'description' => 'Organic vegetables cultivated with care.',
         ]);
 
         ProductCategory::create([
             'user_id' => $user->id,
             'name' => 'Dairy Products',
-            'icon' => 'user(1).jpg',
+            'icon' => 'farmer(1).jpg',
             'description' => 'Fresh dairy products including milk, cheese, and yogurt.',
         ]);
 
