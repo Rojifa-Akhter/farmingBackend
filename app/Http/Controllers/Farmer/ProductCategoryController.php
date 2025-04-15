@@ -33,6 +33,7 @@ class ProductCategoryController extends Controller
             'user_id' => Auth::id(),
             'name'      => $request->name,
             'icon'      => $new_name,
+            'description'      => $request->description,
         ]);
 
         return response()->json(['status' => true, 'message' => 'Category added successfully', 'data' => $category]);
