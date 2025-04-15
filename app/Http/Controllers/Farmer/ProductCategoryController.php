@@ -30,7 +30,7 @@ class ProductCategoryController extends Controller
             $path      = $icon->move(public_path('uploads/product_icons'), $new_name);
         }
         $category = ProductCategory::create([
-            'farmer_id' => Auth::id(),
+            'user_id' => Auth::id(),
             'name'      => $request->name,
             'icon'      => $new_name,
         ]);
@@ -47,7 +47,7 @@ class ProductCategoryController extends Controller
             return response()->json(['status' => false, 'message' => 'Category not found'], 422);
         }
 
-        if ($category->farmer_id !== Auth::id()) {
+        if ($category->user_id !== Auth::id()) {
             return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
         }
 
@@ -100,7 +100,7 @@ class ProductCategoryController extends Controller
             return response()->json(['status' => false, 'message' => 'Category not found'], 404);
         }
 
-        if ($category->farmer_id !== Auth::id()) {
+        if ($category->user_id !== Auth::id()) {
             return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
         }
 
@@ -111,7 +111,7 @@ class ProductCategoryController extends Controller
     // Get All Categories
     public function getCategories()
     {
-        $categories = ProductCategory::with('farmer:id,name')->paginate(10);
+        $categories = ProductCategory::paginate(10);
         return response()->json([
             'status'  => $categories->isNotEmpty(),
             'message' => $categories->isNotEmpty() ? 'Product Category list fetched successfully!' : 'No data found',

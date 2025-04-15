@@ -20,7 +20,8 @@ class ProductSeeder extends Seeder
             return;
         }
 
-        $category = ProductCategory::where('farmer_id', $farmer->id)->first();
+        $category = ProductCategory::where('user_id', $farmer->id)->first();
+
 
         if (!$category) {
             return;

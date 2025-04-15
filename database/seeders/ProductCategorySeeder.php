@@ -13,30 +13,30 @@ class ProductCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $farmer = User::where('role', 'farmer')->first();
+        $user = User::where('role', 'super_admin')->first();
 
-        if (!$farmer) {
+        if (!$user) {
             return;
         }
 
         ProductCategory::create([
-            'farmer_id' => $farmer->id,
+            'user_id' => $user->id,
             'name' => 'Fruits',
-            'icon' => 'farmer(1).jpg',
+            'icon' => 'user(1).jpg',
             'description' => 'Fresh and organic fruits harvested from the farm.',
         ]);
 
         ProductCategory::create([
-            'farmer_id' => $farmer->id,
+            'user_id' => $user->id,
             'name' => 'Vegetables',
-            'icon' => 'farmer(1).jpg',
+            'icon' => 'user(1).jpg',
             'description' => 'Organic vegetables cultivated with care.',
         ]);
 
         ProductCategory::create([
-            'farmer_id' => $farmer->id,
+            'user_id' => $user->id,
             'name' => 'Dairy Products',
-            'icon' => 'farmer(1).jpg',
+            'icon' => 'user(1).jpg',
             'description' => 'Fresh dairy products including milk, cheese, and yogurt.',
         ]);
 

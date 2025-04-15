@@ -41,6 +41,11 @@ Route::middleware('auth:api', 'super_admin')->group(function () {
     Route::delete('delete-logistic/{id}', [LogisticController::class, 'deleteLogistics']);
     Route::get('analytics', [AdminDashboardController::class, 'Analytics']);
 
+    //product category data routing
+    Route::post('add-categories', [ProductCategoryController::class, 'addCategory']);
+    Route::put('update-categorie/{id}', [ProductCategoryController::class, 'updateCategory']);
+    Route::delete('delete-categories/{id}', [ProductCategoryController::class, 'deleteCategory']);
+   
 });
 //farmer
 Route::middleware('auth:api', 'farmer')->group(function () {
@@ -53,11 +58,7 @@ Route::middleware('auth:api', 'farmer')->group(function () {
     Route::post('add-monitoring', [FarmMonitorController::class, 'addMonitorData']);
     Route::put('update-monitoring/{id}', [FarmMonitorController::class, 'updateMonitorData']);
     Route::delete('delete-monitoring/{id}', [FarmMonitorController::class, 'deleteMonitorData']);
-    //product category data routing
-    Route::post('add-categories', [ProductCategoryController::class, 'addCategory']);
-    Route::put('update-categorie/{id}', [ProductCategoryController::class, 'updateCategory']);
-    Route::delete('delete-categories/{id}', [ProductCategoryController::class, 'deleteCategory']);
-    //product route
+     //product route
     Route::post('add-product', [ProductController::class, 'addProduct']);
     Route::put('update-product/{id}', [ProductController::class, 'updateProduct']);
     Route::delete('delete-product/{id}', [ProductController::class, 'deleteProduct']);
