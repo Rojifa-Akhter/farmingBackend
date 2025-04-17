@@ -20,12 +20,12 @@ class ProductSeeder extends Seeder
             return;
         }
 
-        $category = ProductCategory::where('user_id', $farmer->id)->first();
+         // Get any available category (created by super_admin)
+         $category = ProductCategory::first();
 
-
-        if (!$category) {
-            return;
-        }
+         if (!$category) {
+             return;
+         }
 
         Product::create([
             'farmer_id' => $farmer->id,

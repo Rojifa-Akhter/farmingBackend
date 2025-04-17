@@ -7,9 +7,9 @@ class ProductCategory extends Model
 {
     protected $guarded = ['id'];
     // Relationship: Category belongs to a Farmer (User)
-    public function farmer()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'farmer_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function getIconAttribute($icon)
     {
