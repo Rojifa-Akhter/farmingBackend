@@ -45,7 +45,7 @@ Route::middleware('auth:api', 'super_admin')->group(function () {
     Route::post('add-categories', [ProductCategoryController::class, 'addCategory']);
     Route::put('update-categorie/{id}', [ProductCategoryController::class, 'updateCategory']);
     Route::delete('delete-categories/{id}', [ProductCategoryController::class, 'deleteCategory']);
-   
+
 });
 //farmer
 Route::middleware('auth:api', 'farmer')->group(function () {
@@ -139,6 +139,6 @@ Route::middleware('auth:api', 'common')->group(function () {
 
 });
 // Route::get('insurance-list', [InsuranceController::class, 'insuranceList']);
-Route::get('all-products', [ProductController::class, 'getProduct']);
-Route::get('investment-get', [InvestmentController::class, 'getInvestment']);
-Route::get('farms', [FarmController::class, 'farmList']);
+// Route::get('all-products', [ProductController::class, 'getProduct']);
+// Route::get('investment-get', [InvestmentController::class, 'getInvestment']);
+// Route::get('farms', [FarmController::class, 'farmList']);

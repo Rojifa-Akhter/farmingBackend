@@ -25,6 +25,7 @@ class FarmSeeder extends Seeder
             'location' => 'Dhaka, Bangladesh',
             'size' => 50.5,
             'crop_type' => 'Wheat',
+            'image' => json_encode(['farmer.jpg']),
             'crop_status' => 'available',
             'operational_costs' => 10000.00,
         ]);
@@ -35,6 +36,7 @@ class FarmSeeder extends Seeder
             'location' => 'Chattogram, Bangladesh',
             'size' => 75.3,
             'crop_type' => 'Rice',
+            'image' => json_encode(['farmer.jpg']),
             'crop_status' => 'invested',
             'operational_costs' => 15000.00,
         ]);

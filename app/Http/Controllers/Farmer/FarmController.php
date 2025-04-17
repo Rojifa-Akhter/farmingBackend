@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Farmer;
 use App\Http\Controllers\Controller;
 use App\Models\Farm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class FarmController extends Controller
@@ -150,15 +151,32 @@ class FarmController extends Controller
     //farm list for this farmer
     public function farmList()
     {
-        $farm_list = Farm::with('farmer:id,name')->paginate(10);
+        $user = Auth::user();
+
+        if ($user->role === 'farmer') {
+            // Farmers only see their own farms
+            $farm_list = Farm::with('farmer:id,name')
+                ->where('farmer_id', $user->id)
+                ->paginate(10);
+        } elseif ($user->role === 'super_admin' || $user->role === 'investor') {
+            // Super Admin and Investor can see all farms
+            $farm_list = Farm::with('farmer:id,name')->paginate(10);
+        } else {
+            // For other roles, deny access
+            return response()->json([
+                'status'  => false,
+                'message' => 'Unauthorized access',
+                'data'    => [],
+            ], 403);
+        }
 
         return response()->json([
             'status'  => $farm_list->isNotEmpty(),
             'message' => $farm_list->isNotEmpty() ? 'Farm list fetched successfully!' : 'No data found',
             'data'    => $farm_list,
         ], 200);
-
     }
+
     public function farmDetails($id)
     {
         $farm_details = Farm::with('farmer:id,name')->find($id);

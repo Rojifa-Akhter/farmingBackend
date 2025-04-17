@@ -154,7 +154,7 @@ class InsuranceController extends Controller
         } elseif ($user->role === 'farmer') {
             // Farmers should only see insurances for their own farms
             $insurances = Insurance::whereHas('farm', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
+                $query->where('farmer_id', $user->id); //  Corrected here
             })->with('user:id,name', 'farm:id,farm_name')->paginate(10);
         } elseif ($user->role === 'investor') {
             // Investors should only see insurances where they invested
