@@ -124,7 +124,7 @@ class ProductCategoryController extends Controller
     // Get Single Category
     public function detailsCategory($id)
     {
-        $category = ProductCategory::with('farmer:id,name,image')->find($id);
+        $category = ProductCategory::find($id);
 
         if (! $category) {
             return response()->json(['status' => false, 'message' => 'Category not found'], 404);
