@@ -46,6 +46,8 @@ Route::middleware('auth:api', 'super_admin')->group(function () {
     Route::put('update-categorie/{id}', [ProductCategoryController::class, 'updateCategory']);
     Route::delete('delete-categories/{id}', [ProductCategoryController::class, 'deleteCategory']);
 
+    Route::get('farmer-list', [UserController::class, 'farmerList']);
+
 });
 //farmer
 Route::middleware('auth:api', 'farmer')->group(function () {
